@@ -10,6 +10,31 @@ def read_table_field(field:str):
     label = pdf.pq('LTTextLineHorizontal:contains("'+field+'")')
     if label is None:
         raise Exception(field + "not found")
+
+    if len(label) >1:
+        print("found ",len(label), " elements")
+        found = False
+        for element in label:
+            l = pdf.pq(element)
+            left_corner = float(l.attr("x0"))
+            bottom_corner = float(l.attr("y0"))
+            offset = 190
+            nat = pdf.pq(
+                'LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")'
+                % (left_corner+offset, bottom_corner+2 , left_corner + offset+10, bottom_corner+3)
+            ).text()
+            print("nat",nat)
+            if "N" in nat:
+                label = l
+                found = True
+                break
+
+        if not found:
+            print("last nat before error",nat)
+            raise Exception("Nat. N not found for any entry")
+
+
+
     left_corner = float(label.attr("x0"))
     bottom_corner = float(label.attr("y0"))
     result = pdf.pq(
@@ -20,6 +45,7 @@ def read_table_field(field:str):
 
 while True:
     pdf.load(i)
+    print("Page ",i)
     label = pdf.pq('LTTextLineHorizontal:contains("Data Pagamento")')
     if label is None:
         raise Exception("date not found")
@@ -34,3 +60,4 @@ while True:
     print("CONTR.PREVID.RPPS-LC: ",read_table_field("CONTR.PREVID.RPPS-LC"))
 
     i += 1
+
