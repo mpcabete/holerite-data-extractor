@@ -1,0 +1,89 @@
+{
+  "2022": {
+    "faixas": [
+      {
+        "baseCalculo": 1903.98,
+        "aliquota": 0,
+        "deducao": 0
+      },
+      {
+        "baseCalculo": 2826.65,
+        "aliquota": 7.5,
+        "deducao": 142.80
+      },
+      {
+        "baseCalculo": 3751.05,
+        "aliquota": 15.0,
+        "deducao": 354.80
+      },
+      {
+        "baseCalculo": 4664.68,
+        "aliquota": 22.5,
+        "deducao": 636.13
+      },
+      {
+        "baseCalculo": "infinity",
+        "aliquota": 27.5,
+        "deducao": 869.36
+      }
+    ]
+  },
+  "2023": {
+    "faixas": [
+      {
+        "baseCalculo": 2112.00,
+        "aliquota": 0,
+        "deducao": 0
+      },
+      {
+        "baseCalculo": 2826.65,
+        "aliquota": 7.5,
+        "deducao": 158.40
+      },
+      {
+        "baseCalculo": 3751.05,
+        "aliquota": 15.0,
+        "deducao": 370.40
+      },
+      {
+        "baseCalculo": 4664.68,
+        "aliquota": 22.5,
+        "deducao": 651.73
+      },
+      {
+        "baseCalculo": "infinity",
+        "aliquota": 27.5,
+        "deducao": 884.96
+      }
+    ]
+  },
+  "2024": {
+    "faixas": [
+      {
+        "baseCalculo": 2259.20,
+        "aliquota": 0,
+        "deducao": 0
+      },
+      {
+        "baseCalculo": 2826.65,
+        "aliquota": 7.5,
+        "deducao": 169.44
+      },
+      {
+        "baseCalculo": 3751.05,
+        "aliquota": 15.0,
+        "deducao": 381.44
+      },
+      {
+        "baseCalculo": 4664.68,
+        "aliquota": 22.5,
+        "deducao": 662.77
+      },
+      {
+        "baseCalculo": "infinity",
+        "aliquota": 27.5,
+        "deducao": 896.00
+      }
+    ]
+  }
+}

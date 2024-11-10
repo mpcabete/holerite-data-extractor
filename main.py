@@ -1,9 +1,31 @@
 import os
 import pdfquery
 from pandas import DataFrame
+import pandas as pd
+import json
 
 PDFS_DIR="pdfs"
 SHEETS_DIR="tabelas"
+
+
+# Open and read the JSON file
+with open('alicotas.json', 'r') as file:
+    alicotas = json.load(file)
+
+# Print the data
+def get_alicota(ano,vencimentos):
+    alicotas_correntes = alicotas.get(ano)
+    if alicotas_correntes is None:
+        alicotas_correntes = alicotas.get("2022")
+
+    for faixa in alicotas_correntes["faixas"]:
+        if faixa["baseCalculo"] == "infinity":
+            return (faixa["deducao"],faixa["aliquota"]/100)
+
+        if float(vencimentos)>faixa["baseCalculo"]:
+            continue
+        else:
+            return (faixa["deducao"],faixa["aliquota"]/100)
 
 def extract_value_from_position(pdf ,label, x_offset, y_offset, width = 50, height = 50,method="overlaps"):
     left_corner = float(label.attr("x0"))
@@ -69,8 +91,8 @@ def process_pdf(pdf_path,sheet_path):
     vencimentos = []
     total_pages = pdf.doc.catalog['Pages'].resolve()['Count']
     for i in range(total_pages):
-        if(i == 4):
-            break
+        # if(i == 4):
+        #     break
         pdf.load(i)
         print("Processando pagina ", i+1)
         label = pdf.pq('LTTextLineHorizontal:contains("Data Pagamento")')
@@ -93,11 +115,21 @@ def process_pdf(pdf_path,sheet_path):
         "Data Pagamento": data_pagamento,
         "Vencimentos":vencimentos,
         "Contribuicao previdencia": contrib_previd,
+        "OUTRAS DEDUÇÕES" : 0,
         "Auxilio Transporte": auxilio_transporte,
     })
 
     df["Ano"] = df["Data Pagamento"].str.split("/").str[-1]
 
+    df["Data Pagamento"] = pd.to_datetime(df["Data Pagamento"],format="%d/%m/%Y")
+    df.sort_values(by="Data Pagamento", ascending=True, inplace=True)
+    df["Data Pagamento"]= df["Data Pagamento"].dt.strftime('%d/%m/%Y')
+    df["DPTE"] = 189.59
+    df[['PARCELAS A DEDUZIR','ALIQUOTA IR']] = df.apply(
+        lambda row: get_alicota(row['Ano'],row['Vencimentos']), 
+        axis=1,
+        result_type='expand'
+    )
     print(df)
 
     df.to_excel(sheet_path, index=False)
