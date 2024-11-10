@@ -17,11 +17,6 @@ def extract_value_from_position(pdf ,label, x_offset, y_offset, width = 50, heig
            bottom_corner+y_offset+height
        )
     ).text()
-    print("valueslla,", x_offset,
-            y_offset,
-            x_offset+width,
-           y_offset+height
-   )
     return result
 
 def br_string_to_float(value_str):
@@ -46,19 +41,16 @@ def read_contrib_table_field(pdf,field: str):
         return ""
 
     if len(label) > 1:
-        print("found ", len(label), " elements")
         found = False
         for element in label:
             l = pdf.pq(element)
             nat = extract_value_from_position(pdf,l,190,2,width=10,height=1)
-            print("nat", nat)
             if "N" in nat:
                 label = l
                 found = True
                 break
 
         if not found:
-            print("last nat before error", nat)
             raise Exception("Nat. N not found for any entry")
 
     result = extract_value_from_position(pdf,label,400,0,width=50,height=0)
@@ -80,10 +72,9 @@ def process_pdf(pdf_path,sheet_path):
         if(i == 4):
             break
         pdf.load(i)
-        print("Page ", i)
+        print("Processando pagina ", i+1)
         label = pdf.pq('LTTextLineHorizontal:contains("Data Pagamento")')
         data = extract_value_from_position(pdf,label,0,-10,width=50,height=10,method="in")
-        print("data",data)
         data_pagamento.append(data)
         auxilio_transporte.append(read_auxilio_table_field(pdf,"AUXILIO TRANSPORTE"))
         contrib_previd.append(read_contrib_table_field(pdf,"CONTR.PREVID.RPPS-LC"))
@@ -94,7 +85,6 @@ def process_pdf(pdf_path,sheet_path):
             if "Vencimentos" in label.parent().text():
                 break
 
-        print("Vencimentos", len(label))
         data = extract_value_from_position(pdf,label, 0, -20, width=40, height=5)
         value = br_string_to_float(data)
         vencimentos.append(value)

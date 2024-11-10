@@ -1,0 +1,65 @@
+I have the following tables and i need to convert it to a dictionary with the following structure:
+
+<dictionary structure>
+{"2024":[
+    {
+    "base":"2259.20",
+    "aliquota":0,
+    "deducao":0,
+    },
+    {
+    "base":"2826.65",
+    "aliquota":0.075,
+    "deducao":169.44,
+    }
+    ...
+]
+...
+}
+</dictionary structure>
+
+<tables>
+<Tabela de IRRF de 02/2024 a 11/2024>
+Base de cálculo	Alíquota	Dedução
+de R$ 0,00 até R$ 2.259,20	isento	R$ 0,00
+de R$ 2.259,21 até R$ 2.826,65	7,50%	R$ 169,44
+de R$ 2.826,66 até R$ 3.751,05	15,00%	R$ 381,44
+de R$ 3.751,06 até R$ 4.664,68	22,50%	R$ 662,77
+a partir de R$ 4.664,68	27,50%	R$ 896,00
+</Tabela de IRRF de 02/2024 a 11/2024>
+<Base de cálculo	Alíquota	Dedução
+de R$ 0,00 até R$ 2.112,00	isento	R$ 0,00
+de R$ 2.112,01 até R$ 2.826,65	7,50%	R$ 158,40
+de R$ 2.826,66 até R$ 3.751,05	15,00%	R$ 370,40
+de R$ 3.751,06 até R$ 4.664,68	22,50%	R$ 651,73
+a partir de R$ 4.664,68	27,50%	R$ 884,96Tabela de IRRF de 05/2023 a 01/2024>
+
+</Tabela de IRRF de 05/2023 a 01/2024>
+<Tabela de IRRF de 04/2015 a 04/2023>
+Base de cálculo	Alíquota	Dedução
+de R$ 0,00 até R$ 1.903,98	isento	R$ 0,00
+de R$ 1.903,99 até R$ 2.826,65	7,50%	R$ 142,80
+de R$ 2.826,66 até R$ 3.751,05	15,00%	R$ 354,80
+de R$ 3.751,06 até R$ 4.664,68	22,50%	R$ 636,13
+a partir de R$ 4.664,68	27,50%	R$ 869,36
+
+</Tabela de IRRF de 04/2015 a 04/2023>
+<Base de cálculo	Alíquota	Dedução
+de R$ 0,00 até R$ 1.787,77	isento	R$ 0,00
+de R$ 1.787,78 até R$ 2.679,29	7,50%	R$ 134,08
+de R$ 2.679,30 até R$ 3.572,43	15,00%	R$ 335,03
+de R$ 3.572,44 até R$ 4.463,81	22,50%	R$ 602,96
+a partir de R$ 4.463,82	27,50%	R$ 826,15Tabela de IRRF de 01/2014 a 03/2015>
+
+</Tabela de IRRF de 01/2014 a 03/2015>
+
+<Tabela de IRRF de 01/2013 a 12/2013>
+Base de cálculo	Alíquota	Dedução
+de R$ 0,00 até R$ 1.710,78	isento	R$ 0,00
+de R$ 1.710,79 até R$ 2.563,91	7,50%	R$ 128,31
+de R$ 2.563,92 até R$ 3.418,59	15,00%	R$ 320,60
+de R$ 3.418,60 até R$ 4.271,59	22,50%	R$ 577,00
+a partir de R$ 4.271,59	27,50%	R$ 790,58
+</Tabela de IRRF de 01/2013 a 12/2013>
+
+
