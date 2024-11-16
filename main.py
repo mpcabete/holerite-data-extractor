@@ -3,6 +3,7 @@ import pdfquery
 from pandas import DataFrame
 import pandas as pd
 import json
+import re
 
 PDFS_DIR="pdfs"
 SHEETS_DIR="tabelas"
@@ -28,21 +29,33 @@ def get_alicota(ano,vencimentos):
             return (faixa["deducao"],faixa["aliquota"]/100)
 
 def extract_value_from_position(pdf ,label, x_offset, y_offset, width = 50, height = 50,method="overlaps"):
-    left_corner = float(label.attr("x0"))
-    bottom_corner = float(label.attr("y0"))
-    result = pdf.pq(
-        'LTTextLineHorizontal:%s_bbox("%s, %s, %s, %s")'
-        % (method,
-            left_corner + x_offset,
-           bottom_corner + y_offset,
-           left_corner + x_offset+width,
-           bottom_corner+y_offset+height
-       )
-    ).text()
-    return result
+    try:
+        left_corner = float(label.attr("x0"))
+        bottom_corner = float(label.attr("y0"))
+        result = pdf.pq(
+            'LTTextLineHorizontal:%s_bbox("%s, %s, %s, %s")'
+            % (method,
+                left_corner + x_offset,
+               bottom_corner + y_offset,
+               left_corner + x_offset+width,
+               bottom_corner+y_offset+height
+           )
+        ).text()
+        return result
+    except Exception as e:
+        print(e)
+        return ""
 
 def br_string_to_float(value_str):
-    return float(value_str.split(' ')[0].replace(".","").replace(",","."))
+    if value_str is None:
+        return None
+    locale_string = value_str.split(' ')[0].replace(".","").replace(",",".")
+    try:
+        result_float = float(locale_string)
+    except Exception as e:
+        print(e)
+        return None
+    return result_float
 
 def read_auxilio_table_field(pdf,field: str):
     labels = pdf.pq('LTTextLineHorizontal:contains("' + field + '")')
@@ -60,13 +73,15 @@ def read_auxilio_table_field(pdf,field: str):
 def read_contrib_table_field(pdf,field: str):
     label = pdf.pq('LTTextLineHorizontal:contains("' + field + '")')
     if len(label) == 0:
+        print(f"label {str} not found")
         return ""
 
     if len(label) > 1:
         found = False
         for element in label:
             l = pdf.pq(element)
-            nat = extract_value_from_position(pdf,l,190,2,width=10,height=1)
+            nat = extract_value_from_position(pdf,l,190,2,width=40,height=1)
+            print("nat",nat)
             if "N" in nat:
                 label = l
                 found = True
@@ -83,7 +98,6 @@ def process_pdf(pdf_path,sheet_path):
     pdf = pdfquery.PDFQuery(pdf_path) 
     if pdf is None:
         raise Exception("unable to load PDF")
-    i = 0
 
     data_pagamento = []
     auxilio_transporte = []
@@ -96,7 +110,7 @@ def process_pdf(pdf_path,sheet_path):
         pdf.load(i)
         print("Processando pagina ", i+1)
         label = pdf.pq('LTTextLineHorizontal:contains("Data Pagamento")')
-        data = extract_value_from_position(pdf,label,0,-10,width=50,height=10,method="in")
+        data = extract_value_from_position(pdf,label,0,-11,width=50,height=10,method="in")
         data_pagamento.append(data)
         auxilio_transporte.append(read_auxilio_table_field(pdf,"AUXILIO TRANSPORTE"))
         contrib_previd.append(read_contrib_table_field(pdf,"CONTR.PREVID.RPPS-LC"))
@@ -107,9 +121,26 @@ def process_pdf(pdf_path,sheet_path):
             if "Vencimentos" in label.parent().text():
                 break
 
-        data = extract_value_from_position(pdf,label, 0, -20, width=40, height=5)
+        data = extract_value_from_position(pdf,label, 0, -15, width=40, height=14)
+        value = re.search(r"\d+\.\d+\,\d+",data)
+        if value is None:
+            data = None
+        else:
+            data = value.group()
         value = br_string_to_float(data)
         vencimentos.append(value)
+
+        df_for_print = DataFrame({
+            "Data Pagamento": [data_pagamento[-1]],
+            "Vencimentos":[vencimentos[-1]],
+            "Contribuicao previdencia": [contrib_previd[-1]],
+            "Auxilio Transporte": [auxilio_transporte[-1]],
+        })
+
+        # print(["data_pagamento", "auxilio_transporte", "contrib_previd", "vencimentos"])
+        # print([data_pagamento[-1], auxilio_transporte[-1], contrib_previd[-1], vencimentos[-1]])
+        print(df_for_print)
+        print()
 
     df = DataFrame({
         "Data Pagamento": data_pagamento,
